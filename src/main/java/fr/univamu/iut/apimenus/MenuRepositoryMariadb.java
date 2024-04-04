@@ -3,7 +3,6 @@ package fr.univamu.iut.apimenus;
 import java.io.Closeable;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable {
@@ -25,21 +24,24 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
     }
 
     @Override
-    public Menu getMenu(int id) {
+    public Menu getMenu(int menuId) {
         Menu selectedMenu = null;
 
-        String query = "SELECT * FROM Menus WHERE id=?";
+        String query = "SELECT * FROM Menus WHERE menu_id=?";
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
-            ps.setInt(1, id);
+            ps.setInt(1, menuId);
+
             ResultSet result = ps.executeQuery();
 
             if (result.next()) {
                 String name = result.getString("name");
                 String creatorName = result.getString("creator_name");
-                Date creationDate = result.getDate("creation_date");
+                String creationDate = result.getString("creation_date");
 
-                selectedMenu = new Menu(id, name, creatorName, creationDate);
+                List<Plat> Plat = getPlatsByMenu(menuId);
+
+                selectedMenu = new Menu(menuId, name, Plat, creatorName, creationDate);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -49,8 +51,8 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
     }
 
     @Override
-    public List<Menu> getAllMenus() {
-        List<Menu> menus = new ArrayList<>();
+    public ArrayList<Menu> getAllMenus() {
+        ArrayList<Menu> menus = new ArrayList<>();
 
         String query = "SELECT * FROM Menus";
 
@@ -58,13 +60,15 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
             ResultSet result = ps.executeQuery();
 
             while (result.next()) {
-                int id = result.getInt("id");
+                int menu_id = result.getInt("menu_id");
                 String name = result.getString("name");
                 String creatorName = result.getString("creator_name");
-                Date creationDate = result.getDate("creation_date");
+                String creationDate = result.getString("creation_date");
 
-                Menu menu = new Menu(id, name, creatorName, creationDate);
-                menus.add(menu);
+                List<Plat> Plat = getPlatsByMenu(menu_id);
+
+                Menu currentmenu = new Menu(menu_id, name, Plat, creatorName, creationDate);
+                menus.add(currentmenu);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -74,19 +78,44 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
     }
 
     @Override
-    public boolean updateMenu(int id, String name) {
-        return false;
+    public void addMenu(Menu menu) {
+        String query = "INSERT INTO Menus (name, creator_name, creation_date) VALUES (?, ?, ?)";
+        int rowsAffected = 0;
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, menu.getName());
+            ps.setString(2, menu.getCreatorName());
+            ps.setString(3, menu.getCreationDate());
+            ps.executeUpdate();
+
+            ResultSet result = ps.getGeneratedKeys();
+            if (result.next()) {
+                int id = result.getInt(1);
+                for (Plat plat : menu.getPlats()) {
+                    plat.setId(id);
+                    addPlat(plat);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public void addPlat(Plat plat) {
+
     }
 
     @Override
-    public boolean updateMenu(int id, String name, String creatorName) {
+    public boolean updateMenu(int id, String name) {
         String query = "UPDATE Menus SET name=? WHERE id=?";
         int rowsAffected = 0;
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setString(1, name);
             ps.setInt(2, id);
-            ps.setString(3, creatorName);
 
             rowsAffected = ps.executeUpdate();
         } catch (SQLException e) {
@@ -96,44 +125,108 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
         return rowsAffected > 0;
     }
 
+
+
     @Override
-    public Menu addMenu(Menu menu) {
-        String query = "INSERT INTO Menus (name, creator_name, creation_date) VALUES (?, ?, ?, ?, ?)";
-        int id = 0;
+    public boolean deleteMenu(int menuId) {
+        String query = "DELETE FROM Menus WHERE menu_id=?";
+        int rowsAffected = 0;
 
-        try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, menu.getName());
-            ps.setString(2, menu.getCreatorName());
-            ps.setDate(3, new java.sql.Date(menu.getCreationDate().getTime()));
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, menuId);
+            rowsAffected = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-            ps.executeUpdate();
+        return rowsAffected > 0;
+    }
 
-            ResultSet generatedKeys = ps.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                id = generatedKeys.getInt(1);
+    @Override
+    public ArrayList<Plat> getAllPlats() {
+        ArrayList<Plat> Plat = new ArrayList<>();
+        String query = "SELECT * FROM Plat";
+
+        try(PreparedStatement ps = dbConnection.prepareStatement(query)){
+            ResultSet result = ps.executeQuery();
+
+            while(result.next()){
+                int id = result.getInt("id");
+                String nom = result.getString("nom");
+                String description = result.getString("description");
+                double prix = result.getDouble("prix");
+                String createurNom = result.getString("createur_nom");
+                Date dateCreation = result.getDate("date_creation");
+
+                Plat plat = new Plat(id, nom, description, prix, createurNom, dateCreation);
+                plat.setId(id);
+                Plat.add(plat);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Plat;
+    }
+
+    @Override
+    public Plat getPlat(int id) {
+        Plat selectedPlat = null;
+
+        String query = "SELECT * FROM Plat WHERE id=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ResultSet result = ps.executeQuery();
+
+            if (result.next()) {
+                String nom = result.getString("nom");
+                String description = result.getString("description");
+                double prix = result.getDouble("prix");
+                String createurNom = result.getString("createur_nom");
+                Date dateCreation = result.getDate("date_creation");
+
+                selectedPlat = new Plat(id, nom, description, prix, createurNom, dateCreation);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        menu.setId(id);
-        return menu;
+        return selectedPlat;
     }
 
     @Override
-    public boolean deleteMenu(int id) {
-        String query = "DELETE FROM Menus WHERE id=?";
-        int rowsAffected = 0;
+    public ArrayList<Plat> getPlatsByMenu(int id) {
+        ArrayList<Plat> listPlat = new ArrayList<>();
 
+        String query = "SELECT * FROM Plat WHERE id=?";
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setInt(1, id);
-            rowsAffected = ps.executeUpdate();
+            ResultSet result = ps.executeQuery();
+
+            while (result.next()) {
+                String nom = result.getString("nom");
+                String description = result.getString("description");
+                double prix = result.getDouble("prix");
+                String createurNom = result.getString("createur_nom");
+                Date dateCreation = result.getDate("date_creation");
+
+                Plat plat = new Plat(id, nom, description, prix, createurNom, dateCreation);
+                listPlat.add(plat);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return rowsAffected > 0;
+        return listPlat;
     }
+
+
+
+
+
+
 
 
 }

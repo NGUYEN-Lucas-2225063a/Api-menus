@@ -5,6 +5,9 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import java.util.Date;
 
+import static java.awt.SystemColor.menu;
+import static java.awt.SystemColor.menuText;
+
 @Path("/menus")
 
 public class MenuResource {
@@ -32,9 +35,9 @@ public class MenuResource {
     }
 
     @GET
-    @Path("{id}")
+    @Path("{menuId}")
     @Produces("application/json")
-    public String getMenu(@PathParam("id") int id) {
+    public String getMenu(@PathParam("menuId") int id) {
         String result = service.getMenuJSON(id);
 
         if (result == null)
@@ -43,28 +46,56 @@ public class MenuResource {
         return result;
     }
 
+    @GET
+    @Path("plats")
+    @Produces("application/json")
+    public String getAllPlats() {
+        return service.getAllPlatsJSON();
+    }
+
+    @GET
+    @Path("plats/{id}")
+    @Produces("application/json")
+    public String getPlatsFromMenu(@PathParam("id") int id) {
+        String result = service.getPlatsFromMenuJSON(id);
+
+        if (result == null)
+            throw new NotFoundException();
+
+        return result;
+    }
+
+    @GET
+    @Path("plats/menu={id}")
+    @Produces("application/json")
+    public String getPlatsByMenu(@PathParam("id") int id) {
+        String result = service.getPlatsByMenuJSON(id);
+
+        if (result == null)
+            throw new NotFoundException();
+
+        return result;
+    }
+
+    //curl -X POST -d "name=TEST&creatorName=Lucas" http://localhost:8080/apimenus-1.0-SNAPSHOT/menus
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response createMenu(Menu menu) {
-        Menu newMenu = service.createMenu(menu.getName(), menu.getCreatorName());
-        return Response.ok(newMenu).build();
+    public String addMenu(Menu menu) {
+        return service.addMenu(menu);
     }
-
-    @PUT
-    @Path("{id}")
+    @POST
+    @Path("plats/menu={id}")
     @Consumes("application/json")
-    public Response updateMenu(@PathParam("id") int id, Menu menu) {
-        if (!service.updateMenu(id, menu))
-            throw new NotFoundException();
-        else
-            return Response.ok("updated").build();
+    @Produces("application/json")
+    public String addPlat(Plat plat, @PathParam("id") int id) {
+        plat.setId(id);
+        return service.addPlat(plat);
     }
-
 
     @DELETE
-    @Path("{id}")
-    public Response deleteMenu(@PathParam("id") int id) {
+    @Path("{menuId}")
+    public Response deleteMenu(@PathParam("menuId") int id) {
         if (!service.deleteMenu(id))
             throw new NotFoundException();
         else

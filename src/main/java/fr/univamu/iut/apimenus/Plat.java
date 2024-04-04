@@ -16,7 +16,8 @@ public class Plat {
     protected Date dateCreation; // Date de création du plat
 
     // Constructeur
-    public Plat(String nom, String description, double prix, String createurNom, Date dateCreation) {
+    public Plat(int id, String nom, String description, double prix, String createurNom, Date dateCreation) {
+        this.id = id;
         this.nom = nom;
         this.description = description;
         this.prix = prix;
