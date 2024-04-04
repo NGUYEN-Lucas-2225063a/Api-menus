@@ -105,24 +105,100 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
 
     @Override
     public void addPlat(Plat plat) {
-
-    }
-
-    @Override
-    public boolean updateMenu(int id, String name) {
-        String query = "UPDATE Menus SET name=? WHERE id=?";
+        String query = "INSERT INTO Plat (id, nom, description, prix, createur_nom, date_creation) VALUES (?, ?, ?, ?, ?, ?)";
         int rowsAffected = 0;
 
-        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
-            ps.setString(1, name);
-            ps.setInt(2, id);
+        try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, plat.getId());
+            ps.setString(1, plat.getNom());
+            ps.setString(2, plat.getDescription());
+            ps.setDouble(3, plat.getPrix());
+            ps.setString(4, plat.getCreateurNom());
 
-            rowsAffected = ps.executeUpdate();
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
 
-        return rowsAffected > 0;
+    @Override
+    public void updateMenu(Menu menu) {
+    String query = "UPDATE Menus SET name=? WHERE menu_id=?";
+
+    if (menu.getPlats().isEmpty()) {
+        return;
+        }
+
+        try{
+            dbConnection.setAutoCommit(false);
+            try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+                ps.setString(1, menu.getName());
+                ps.setInt(2, menu.getMenuId());
+                ps.executeUpdate();
+
+                for (Plat plat : menu.getPlats()) {
+                    updatePlat(plat);
+                }
+
+                dbConnection.commit();
+            } catch (SQLException e) {
+                dbConnection.rollback();
+                throw new RuntimeException(e);
+            } finally {
+                dbConnection.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateMenu(Menu menu,String creationDate) {
+        String query = "UPDATE Menus SET name=?, creation_date=? WHERE menu_id=?";
+
+        if (menu.getPlats().isEmpty()) {
+            return;
+        }
+
+        try {
+            dbConnection.setAutoCommit(false);
+            try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+                ps.setString(1, menu.getName());
+                ps.setString(2, creationDate);
+                ps.setInt(3, menu.getMenuId());
+                ps.executeUpdate();
+
+                for (Plat plat : menu.getPlats()) {
+                    updatePlat(plat);
+                }
+
+                dbConnection.commit();
+            } catch (SQLException e) {
+                dbConnection.rollback();
+                throw new RuntimeException(e);
+            } finally {
+                dbConnection.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updatePlat(Plat plat) {
+        String query = "UPDATE Plat SET nom=?, description=?, prix=?, createur_nom=? WHERE id=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, plat.getNom());
+            ps.setString(2, plat.getDescription());
+            ps.setDouble(3, plat.getPrix());
+            ps.setString(4, plat.getCreateurNom());
+            ps.setInt(5, plat.getId());
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -143,6 +219,19 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
     }
 
     @Override
+    public void deletePlat(int id) {
+        String query = "DELETE FROM Plat WHERE id=?";
+        int rowsAffected = 0;
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            rowsAffected = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public ArrayList<Plat> getAllPlats() {
         ArrayList<Plat> Plat = new ArrayList<>();
         String query = "SELECT * FROM Plat";
@@ -156,9 +245,8 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
                 String description = result.getString("description");
                 double prix = result.getDouble("prix");
                 String createurNom = result.getString("createur_nom");
-                Date dateCreation = result.getDate("date_creation");
 
-                Plat plat = new Plat(id, nom, description, prix, createurNom, dateCreation);
+                Plat plat = new Plat(id, nom, description, prix, createurNom);
                 plat.setId(id);
                 Plat.add(plat);
             }
@@ -185,9 +273,8 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
                 String description = result.getString("description");
                 double prix = result.getDouble("prix");
                 String createurNom = result.getString("createur_nom");
-                Date dateCreation = result.getDate("date_creation");
 
-                selectedPlat = new Plat(id, nom, description, prix, createurNom, dateCreation);
+                selectedPlat = new Plat(id, nom, description, prix, createurNom);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -210,9 +297,8 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
                 String description = result.getString("description");
                 double prix = result.getDouble("prix");
                 String createurNom = result.getString("createur_nom");
-                Date dateCreation = result.getDate("date_creation");
 
-                Plat plat = new Plat(id, nom, description, prix, createurNom, dateCreation);
+                Plat plat = new Plat(id, nom, description, prix, createurNom);
                 listPlat.add(plat);
             }
         } catch (SQLException e) {
@@ -221,12 +307,5 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
 
         return listPlat;
     }
-
-
-
-
-
-
-
 
 }

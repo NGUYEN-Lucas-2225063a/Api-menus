@@ -2,10 +2,7 @@ package fr.univamu.iut.apimenus;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.ws.rs.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MenuService {
@@ -95,9 +92,24 @@ public class MenuService {
     }
 
 
+    public String updateMenu(Menu menu) {
+        try {
+            menuRepo.updateMenu(menu);
+            return "menu updated";
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return "menu not updated";
+        }
+    }
 
-    public boolean updateMenu(int id, Menu Menu) {
-        return menuRepo.updateMenu(id, Menu.getName()) ;
+    public String updateMenu(Menu menu, String creationDate) {
+        try {
+            menuRepo.updateMenu(menu, creationDate);
+            return "menu updated";
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return "menu not updated";
+        }
     }
 
     public boolean deleteMenu(int id) {
@@ -115,13 +127,23 @@ public class MenuService {
     }
 
     public String addPlat(int id, String nom, String description, double prix, String createurNom) {
-        Plat plat = new Plat(id, nom, description, prix, createurNom, new Date());
+        Plat plat = new Plat(id, nom, description, prix, createurNom);
         try {
             menuRepo.addPlat(plat);
             return "plat added";
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return "plat not added";
+        }
+    }
+
+    public String deletePlat(int id) {
+        try {
+            menuRepo.deletePlat(id);
+            return "plat deleted";
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return "plat not deleted";
         }
     }
 

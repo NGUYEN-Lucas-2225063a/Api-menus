@@ -14,8 +14,6 @@ public interface MenuRepositoryInterface {
 
     public ArrayList<Menu> getAllMenus();
 
-    public boolean updateMenu(int id, String name);
-
     public void addMenu(Menu Menu);
 
     public void addPlat(Plat plat);
@@ -28,4 +26,10 @@ public interface MenuRepositoryInterface {
     
     ArrayList<Plat> getAllPlats();
 
+    void updateMenu(Menu menu);
+
+    void updateMenu(Menu menu, String creationDate);
+    void updatePlat(Plat plat);
+
+    void deletePlat(int id);
 }

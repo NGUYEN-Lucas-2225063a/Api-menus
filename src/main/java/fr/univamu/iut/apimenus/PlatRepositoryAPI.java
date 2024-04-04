@@ -75,7 +75,7 @@ public class PlatRepositoryAPI implements PlatRepositoryInterface {
     public boolean updatePlat(int id, String nom, String description, double prix, String createurNom, Date dateCreation) {
         boolean result = false ;
 
-        Plat updatedPlat = new Plat(id, nom, description, prix, createurNom, dateCreation);
+        Plat updatedPlat = new Plat(id, nom, description, prix, createurNom);
 
         // création d'un client
         Client client = ClientBuilder.newClient();

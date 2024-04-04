@@ -3,10 +3,8 @@ package fr.univamu.iut.apimenus;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
-import java.util.Date;
 
 import static java.awt.SystemColor.menu;
-import static java.awt.SystemColor.menuText;
 
 @Path("/menus")
 
@@ -77,13 +75,13 @@ public class MenuResource {
         return result;
     }
 
-    //curl -X POST -d "name=TEST&creatorName=Lucas" http://localhost:8080/apimenus-1.0-SNAPSHOT/menus
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     public String addMenu(Menu menu) {
         return service.addMenu(menu);
     }
+
     @POST
     @Path("plats/menu={id}")
     @Consumes("application/json")
@@ -91,6 +89,34 @@ public class MenuResource {
     public String addPlat(Plat plat, @PathParam("id") int id) {
         plat.setId(id);
         return service.addPlat(plat);
+    }
+
+    @PUT
+    @Path("{id}")
+    @Consumes("application/json")
+    public String updateMenu(@PathParam("id") int id, Menu menu) {
+        menu.setMenuid(id);
+        String result = service.updateMenu(menu);
+
+        // si le menu n'a pas été trouvé
+        if (result == null)
+            throw new NotFoundException();
+        return result;
+    }
+
+
+    @PUT
+    @Path("{id}/date={creationDate}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public String updateMenu(Menu menu, @PathParam("id") int id, @PathParam("creationDate") String creationDate) {
+        menu.setMenuid(id);
+        String result = service.updateMenu(menu, creationDate);
+
+        // si le menu n'a pas été trouvé
+        if (result == null)
+            throw new NotFoundException();
+        return result;
     }
 
     @DELETE
@@ -102,6 +128,12 @@ public class MenuResource {
             return Response.ok("deleted").build();
     }
 
+    @DELETE
+    @Path("plats/menu={id}")
+    public String deletePlat(@PathParam("id") int id) {
+        return service.deletePlat(id);
+    }
 
 }
+
 

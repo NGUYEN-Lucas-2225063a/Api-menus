@@ -71,6 +71,7 @@ public class Menu {
         return "Menu{" +
                 "id=" + menuId +
                 ", name='" + name + '\'' +
+                ", plats=" + plats + '\'' +
                 ", creatorName='" + creatorName + '\'' +
                 ", creationDate=" + creationDate +
                 '}';
