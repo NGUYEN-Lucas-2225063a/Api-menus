@@ -14,13 +14,18 @@ public class MenuResource extends MenuApplication {
 
     public MenuResource() {}
 
+    /**
+     * Constructeur prenant un service en paramètre.
+     * @param service Le service à utiliser pour manipuler les menus.
+     */
     public MenuResource(MenuService service) {
         this.service = service;
     }
 
     /**
-     * Constructeur permettant d'initialiser le service avec une interface d'accès aux données
-     * @param MenuRepo objet implémentant l'interface d'accès aux données
+     * Constructeur permettant d'initialiser le service avec des objets implémentant les interfaces d'accès aux données.
+     * @param MenuRepo Objet implémentant l'interface MenuRepositoryInterface.
+     * @param PlatRepo Objet implémentant l'interface PlatRepositoryInterface.
      */
     public @Inject MenuResource(MenuRepositoryInterface MenuRepo, PlatRepositoryInterface PlatRepo){
         this.service = new MenuService(MenuRepo, PlatRepo) ;
@@ -89,6 +94,7 @@ public class MenuResource extends MenuApplication {
 
     @POST
     @Consumes("application/json")
+    @Produces("application/json")
     public String addMenu(Menu menu) {
         return service.addMenu(menu);
     }

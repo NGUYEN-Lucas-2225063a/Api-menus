@@ -7,11 +7,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Service pour manipuler les menus.
+ */
 public class MenuService {
 
     protected PlatRepositoryInterface platRepo;
     protected MenuRepositoryInterface menuRepo;
 
+    /**
+     * Constructeur de la classe MenuService.
+     * @param menuRepo Interface pour accéder aux données des menus.
+     * @param platRepo Interface pour accéder aux données des plats.
+     */
     public MenuService(MenuRepositoryInterface menuRepo, PlatRepositoryInterface platRepo) {
         this.menuRepo = menuRepo;
         this.platRepo = platRepo;

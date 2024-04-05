@@ -51,5 +51,17 @@ public interface PlatRepositoryInterface {
      */
     public boolean deletePlat(int id);
 
+
+    /**
+     * Met à jour un plat avec la date de création.
+     *
+     * @param id identifiant du plat à mettre à jour
+     * @param nom le nouveau nom du plat
+     * @param description la nouvelle description du plat
+     * @param prix le nouveau prix du plat
+     * @param createurNom le nouveau nom du créateur du plat
+     * @param dateCreation la nouvelle date de création du plat
+     * @return true si la mise à jour a réussi, false sinon
+     */
     boolean updatePlat(int id, String nom, String description, double prix, String createurNom, Date dateCreation);
 }

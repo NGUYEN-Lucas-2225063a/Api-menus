@@ -9,6 +9,14 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
 
     protected Connection dbConnection;
 
+    /**
+     * Constructeur de la classe MenuRepositoryMariadb.
+     * @param url URL de la base de données MariaDB.
+     * @param user Nom d'utilisateur pour la connexion à la base de données.
+     * @param pwd Mot de passe pour la connexion à la base de données.
+     * @throws SQLException en cas d'erreur SQL lors de la connexion à la base de données.
+     * @throws ClassNotFoundException si le pilote JDBC n'est pas trouvé.
+     */
     public MenuRepositoryMariadb(String url, String user, String pwd) throws SQLException, ClassNotFoundException {
         Class.forName("org.mariadb.jdbc.Driver");
         dbConnection = DriverManager.getConnection(url, user, pwd);
