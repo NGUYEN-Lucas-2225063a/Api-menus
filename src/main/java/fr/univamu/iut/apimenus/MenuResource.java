@@ -92,12 +92,16 @@ public class MenuResource extends MenuApplication {
         return result;
     }
 
+    // curl -X POST -H "Content-Type: application/json" -d '{"name": "Menu 1", "creatorName": "Lucas"}' http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     public String addMenu(Menu menu) {
         return service.addMenu(menu);
     }
+
+
+    // curl -X POST -H "Content-Type: application/json" -d '{"id":"5","nom":"Phôv2","description":"Soupe viet","prix":"100","createurNom":"Lucas"}' http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus/plats/1
 
     @POST
     @Path("plats/{id}")
@@ -108,10 +112,12 @@ public class MenuResource extends MenuApplication {
         return service.addPlat(plat);
     }
 
+    // curl -X PUT -H "Content-Type: application/json" -d '{"name": "Menu 5", "menuId": "1"}' http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus/1
+    // curl -X PUT -H "Content-Type: application/json" -d '{"name": "Menu 5"}' http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus/1
     @PUT
-    @Path("{id}")
+    @Path("{menuId}")
     @Consumes("application/json")
-    public String updateMenu(@PathParam("id") int id, Menu menu) {
+    public String updateMenu(@PathParam("menuId") int id, Menu menu) {
         menu.setMenuId(id);
         String result = service.updateMenu(menu);
 
@@ -121,7 +127,7 @@ public class MenuResource extends MenuApplication {
         return result;
     }
 
-
+    // curl -X PUT -H "Content-Type: application/json" -d '{"menuId":"1","name": "Menu 1"}' http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus/1/date="2021-12-31"
     @PUT
     @Path("{id}/date={creationDate}")
     @Consumes("application/json")
@@ -136,6 +142,7 @@ public class MenuResource extends MenuApplication {
         return result;
     }
 
+    // curl -X DELETE http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus/{menuId}
     @DELETE
     @Path("{menuId}")
     public Response deleteMenu(@PathParam("menuId") int id) {
@@ -145,6 +152,8 @@ public class MenuResource extends MenuApplication {
             return Response.ok("deleted").build();
     }
 
+
+    // curl -X DELETE http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus/plats/{id}
     @DELETE
     @Path("plats/menu={id}")
     public String deletePlat(@PathParam("id") int id) {
