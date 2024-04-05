@@ -80,7 +80,6 @@ public class MenuRepositoryMariadb implements MenuRepositoryInterface, Closeable
     @Override
     public void addMenu(Menu menu) {
         String query = "INSERT INTO Menus (name, creator_name, creation_date) VALUES (?, ?, ?)";
-        int rowsAffected = 0;
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, menu.getName());

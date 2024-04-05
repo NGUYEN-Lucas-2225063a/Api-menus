@@ -8,7 +8,7 @@ import static java.awt.SystemColor.menu;
 
 @Path("/menus")
 
-public class MenuResource {
+public class MenuResource extends MenuApplication {
 
     private MenuService service;
 
@@ -75,15 +75,26 @@ public class MenuResource {
         return result;
     }
 
+    @GET
+    @Path("{id}/date")
+    @Produces("application/json")
+    public String getDateJSON(@PathParam("id") int id) {
+        String result = service.getDateJSON(id);
+
+        if (result == null)
+            throw new NotFoundException();
+
+        return result;
+    }
+
     @POST
     @Consumes("application/json")
-    @Produces("application/json")
     public String addMenu(Menu menu) {
         return service.addMenu(menu);
     }
 
     @POST
-    @Path("plats/menu={id}")
+    @Path("plats/{id}")
     @Consumes("application/json")
     @Produces("application/json")
     public String addPlat(Plat plat, @PathParam("id") int id) {
@@ -95,7 +106,7 @@ public class MenuResource {
     @Path("{id}")
     @Consumes("application/json")
     public String updateMenu(@PathParam("id") int id, Menu menu) {
-        menu.setMenuid(id);
+        menu.setMenuId(id);
         String result = service.updateMenu(menu);
 
         // si le menu n'a pas été trouvé
@@ -110,7 +121,7 @@ public class MenuResource {
     @Consumes("application/json")
     @Produces("application/json")
     public String updateMenu(Menu menu, @PathParam("id") int id, @PathParam("creationDate") String creationDate) {
-        menu.setMenuid(id);
+        menu.setMenuId(id);
         String result = service.updateMenu(menu, creationDate);
 
         // si le menu n'a pas été trouvé

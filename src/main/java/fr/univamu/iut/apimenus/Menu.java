@@ -1,5 +1,7 @@
 package fr.univamu.iut.apimenus;
 
+import jakarta.json.bind.annotation.JsonbCreator;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -13,7 +15,14 @@ public class Menu {
     protected String creatorName;
     protected String creationDate;
 
-    public Menu(int menuId, String name, List<Plat>plats,String creatorName, String creationDate) {
+    @JsonbCreator
+    public Menu(String name, List<Plat> plats, String creatorName) {
+        this.name = name;
+        this.plats = plats;
+        this.creatorName = creatorName;
+    }
+
+    public Menu(int menuId, String name, List<Plat>plats, String creatorName, String creationDate) {
         this.menuId = menuId;
         this.name = name;
         this.plats = plats;
@@ -37,7 +46,7 @@ public class Menu {
         return creatorName;
     }
 
-    public String  getCreationDate() {
+    public String getCreationDate() {
         if (creationDate == null) {
             setCreationDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
@@ -48,7 +57,7 @@ public class Menu {
         this.plats = plats;
     }
 
-    public void setMenuid(int menuId) {
+    public void setMenuId(int menuId) {
         this.menuId = menuId;
     }
 

@@ -3,6 +3,8 @@ package fr.univamu.iut.apimenus;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class MenuService {
@@ -42,6 +44,7 @@ public class MenuService {
         return result;
     }
 
+
     public String getAllPlatsJSON() {
         List<Plat> allPlats = menuRepo.getAllPlats();
 
@@ -75,6 +78,32 @@ public class MenuService {
             result = jsonb.toJson(plats);
         } catch (Exception e) {
             System.err.println(e.getMessage());
+        }
+
+        return result;
+    }
+
+    public String getDateJSON(int menuId) {
+        Menu menu = menuRepo.getMenu(menuId);
+        String dateStr = menu.getCreationDate();
+
+        // Convertir la date String en objet LocalDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(dateStr, formatter);
+
+        // Ajouter 1 heure à la date
+        LocalDateTime deliveryDateTime = dateTime.plusHours(1);
+
+        // Convertir l'objet LocalDateTime en String
+        String deliveryDateStr = deliveryDateTime.format(formatter);
+
+        // création du json et conversion de la date de livraison
+        String result = null;
+        try( Jsonb jsonb = JsonbBuilder.create()){
+            result = jsonb.toJson(deliveryDateStr);
+        }
+        catch (Exception e){
+            System.err.println( e.getMessage() );
         }
 
         return result;

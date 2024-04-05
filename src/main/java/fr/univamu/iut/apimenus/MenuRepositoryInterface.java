@@ -1,7 +1,7 @@
 package fr.univamu.iut.apimenus;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public interface MenuRepositoryInterface {
 
@@ -14,11 +14,11 @@ public interface MenuRepositoryInterface {
 
     public ArrayList<Menu> getAllMenus();
 
-    public void addMenu(Menu Menu);
+    void addMenu(Menu Menu);
 
-    public void addPlat(Plat plat);
+    void addPlat(Plat plat);
 
-    public boolean deleteMenu(int id);
+    boolean deleteMenu(int id);
 
     Plat getPlat(int platId);
 

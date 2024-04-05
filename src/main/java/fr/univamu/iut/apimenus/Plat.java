@@ -1,6 +1,9 @@
 package fr.univamu.iut.apimenus;
 
 /// By Lucas N'guyen
+
+import jakarta.json.bind.annotation.JsonbCreator;
+
 /**
  * Classe représentant un plat
  */
@@ -11,6 +14,14 @@ public class Plat {
     protected String description;
     protected double prix;
     protected String createurNom; // Nom de la personne ayant créé le plat
+
+    @JsonbCreator
+    public Plat(String nom, String description, double prix, String createurNom) {
+        this.nom = nom;
+        this.description = description;
+        this.prix = prix;
+        this.createurNom = createurNom;
+    }
 
     // Constructeur
     public Plat(int id, String nom, String description, double prix, String createurNom) {
