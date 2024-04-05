@@ -36,9 +36,12 @@
     - Entrées : ID du menu. @Path("{id}/date")
     - Sorties : Date de livraison au format JSON.
 
+
+
+
 7. **addMenu(Menu menu)** :
     - Description : Ajoute un nouveau menu.
-    - État de l'implémentation : Partiellement Fonctionnelle
+    - État de l'implémentation : Tout Fonctionnelle
     - Entrées : Objet Menu à ajouter.
     - Sorties : Aucune (ou éventuellement un statut HTTP pour indiquer le succès ou l'échec de l'opération).
 
@@ -51,26 +54,24 @@
 
 9. **updateMenu(int id, Menu menu)** :
     - Description : Met à jour un menu existant.
-    - État de l'implémentation : Non fonctionnelle  
-    - Entrées : ID du menu à mettre à jour, nouvel objet Menu.
-    @Path("{id}")
-      - Sorties : Aucune (ou éventuellement un statut HTTP pour indiquer le succès ou l'échec de l'opération).
-
-10. **updateMenu(Menu menu, int id, String creationDate)** :
-    - Description : Met à jour un menu existant avec une nouvelle date de création.
-    - État de l'implémentation : Partiellement fonctionnelle
-    - Entrées : ID du menu à mettre à jour, nouvel objet Menu, nouvelle date de création. @Path("{id}/date={creationDate}")
+    - État de l'implémentation : Non fonctionnelle  - Entrées : ID du menu à mettre à jour, nouvel objet Menu.
+      @Path("{id}")
     - Sorties : Aucune (ou éventuellement un statut HTTP pour indiquer le succès ou l'échec de l'opération).
 
+10. **updateMenu(Menu menu, int id, String creationDate)** :
+- Description : Met à jour un menu existant avec une nouvelle date de création.
+- État de l'implémentation : Non fonctionnelle
+- Entrées : ID du menu à mettre à jour, nouvel objet Menu, nouvelle date de création. @Path("{id}/date={creationDate}")
+- Sorties : Aucune (ou éventuellement un statut HTTP pour indiquer le succès ou l'échec de l'opération).
+
 11. **deleteMenu(int id)** :
-    - Description : Supprime un menu spécifique.
-    - État de l'implémentation : Fonctionnelle (affiche deleted ou no deleted)
-    - Entrées : ID du menu à supprimer. @Path("{menuId}")
-    - Sorties : Réponse HTTP indiquant si la suppression a réussi ou échoué.
+- Description : Supprime un menu spécifique.
+- État de l'implémentation : Fonctionnelle (affiche deleted ou no deleted)
+- Entrées : ID du menu à supprimer. @Path("{menuId}")
+- Sorties : Réponse HTTP indiquant si la suppression a réussi ou échoué.
 
 12. **deletePlat(int id)** :
-    - Description : Supprime un plat spécifique.
-    - État de l'implémentation : Totalement fonctionnelle.
-    - Entrées : ID du plat à supprimer. @Path("plats/menu={id}")
-    - Sorties : Chaîne de caractères indiquant si la suppression a réussi ou échoué.
-
+- Description : Supprime un plat spécifique.
+- État de l'implémentation : Totalement fonctionnelle.
+- Entrées : ID du plat à supprimer. @Path("plats/menu={id}")
+- Sorties : Chaîne de caractères indiquant si la suppression a réussi ou échoué.

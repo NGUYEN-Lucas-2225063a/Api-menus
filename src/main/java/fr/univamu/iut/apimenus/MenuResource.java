@@ -101,7 +101,7 @@ public class MenuResource extends MenuApplication {
     }
 
 
-    // curl -X POST -H "Content-Type: application/json" -d '{"id":"5","nom":"Phôv2","description":"Soupe viet","prix":"100","createurNom":"Lucas"}' http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus/plats/1
+    // curl -X POST -H "Content-Type: application/json" -d '[{"id":"30","nom":"Phôv2","description":"Soupe viet","prix":"100","createurNom":"Lucas"},{"id":"31","nom":"Phôv2","description":"Soupe viet","prix":"100","createurNom":"Lucas"}]' http://localhost:8080/apimenus-1.0-SNAPSHOT/api/menus/plats/14
 
     @POST
     @Path("plats/{id}")
